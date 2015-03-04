@@ -1,0 +1,12 @@
+5c576bf06cf0065cac2f773d990e3081 *DESCRIPTION
+1cb1740ac6a128d3f6558cbd02f797be *NAMESPACE
+7a227f70c4abc64b82a302f16fc060c2 *R/jn.R
+e20f6114d9456245497ae60956f882c0 *R/pickapoint.R
+0f5bd59f88bd93c84ca31945708d1667 *R/plot.jn.R
+2059b5c2ea9f8dbf77d41cceca02d860 *R/print.jn.R
+ef3225fb12306228ef2af46f2150d42e *R/print.pickapoint.R
+8ec3ae7da765ee1912709a0c1dea2f01 *man/jn.Rd
+359891d753831ad9cdeed32e43a644e1 *man/pickapoint.Rd
+2b7e1334f123ecdeb222cba254298cde *man/plot.jn.Rd
+2ea544c6e94e910a3a7c2412db736d1d *man/print.jn.Rd
+c19876454e1248764f3af1e8e39b6f14 *man/print.pickapoint.Rd

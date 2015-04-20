@@ -7,7 +7,7 @@
 \method{print}{pickapoint}(x, \dots)
 }
 \arguments{
-\item{x}{an object of class \code{"pickapoint"}.}
+\item{x}{An object of class \code{"pickapoint"}.}
 
 \item{\dots}{Additional arguments (not supported yet).}
 }

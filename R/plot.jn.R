@@ -2,11 +2,14 @@
 #'
 #' Plot function for objects of class \code{"jn"}.
 #'
-#' @param x an object of class \code{"jn"}.
-#' @param xlab a title for the x axis (character).
-#' @param ylab a title for the y axis (character).
-#' @param xlim coordinates range for x axis (numeric vector).
-#' @param ylim coordinates range for y axis (numeric vector)
+#' @param x An object of class \code{"jn"}.
+#' @param xlab A title for the x axis (character).
+#' @param ylab A title for the y axis (character).
+#' @param xlim Coordinates range for x axis (numeric vector). Determined by the range of the given data by default.
+#' @param ylim Coordinates range for y axis (numeric vector). Determined by the range of the given data by default.
+#' @param axlwd Axis line width (numeric vector). \code{axlwd=10} by default.
+#' @param celwd Conditional effect line width (numeric vector). \code{celwd=10} by default.
+#' @param cblwd Conditional band line width (numeric vector). \code{cblwd=8} by default.
 #' @param \dots Additional arguments (not supported yet).
 #'
 #' @return none
@@ -22,10 +25,7 @@
 #' @rdname plot.jn
 #' @export
 
-plot.jn <- function(x, xlab='', ylab='', xlim=0, ylim=0, ...){
-  if(is(x,'lm')) {
-    x <- jn(x)
-  }
+plot.jn <- function(x, xlab='', ylab='', xlim=0, ylim=0, axlwd=10, celwd=10, cblwd=8, ...){
 
   if(is(x,'jn')) {
     if(length(x$error) > 0){
@@ -33,12 +33,12 @@ plot.jn <- function(x, xlab='', ylab='', xlim=0, ylim=0, ...){
     } else {
       #default auto scaling
       if(missing(ylim)){
-        ylim=c(floor(min(x$llci)),ceiling(max(x$ulci)))
+        ylim=c(floor(min(x$plot$data$llci)),ceiling(max(x$plot$data$ulci)))
       }
       if(missing(xlim)){
-        xlim=c(floor(min(x$x)),ceiling(max(x$x)))
+        xlim=c(floor(min(x$plot$data$x)),ceiling(max(x$plot$data$x)))
       }
-      plot(x=x$x, y=x$y, ylim=ylim, xlim=xlim, ylab="" ,xlab="", type="l")
+      plot(x=x$plot$data$x, y=x$plot$data$y, ylim=ylim, xlim=xlim, ylab="" ,xlab="")
 
       #default axis labels
       if(ylab==''){
@@ -50,23 +50,23 @@ plot.jn <- function(x, xlab='', ylab='', xlim=0, ylim=0, ...){
 
       cat(paste('Values of', x$mod, 'indicated by the shaded region\n'))
       srvect <- vector()
-      srvect = rbind(srvect, unlist(lapply(x$rsll, '[[', 1)))
-      srvect = rbind(srvect, unlist(lapply(x$rsul, '[[', 1)))
+      srvect = rbind(srvect, unlist(lapply(x$plot$summary$lower, '[[', 1)))
+      srvect = rbind(srvect, unlist(lapply(x$plot$summary$upper, '[[', 1)))
       rownames(srvect) <- c('Lower Bound:','Upper Bound:')
+      #srvect[,'y'] <- yasfunc(x,srvect[,'y'])
       print(srvect)
-      for(i in 1:nrow(x$signintervals))
-      {
-        ypolycoords <- x$x[x$signintervals[i,1]:x$signintervals[i,2]]
-        polygon(c(ypolycoords,rev(ypolycoords)),c(x$llci[x$signintervals[i,1]:x$signintervals[i,2]],x$ulci[x$signintervals[i,2]:x$signintervals[i,1]]),col = "grey50", density = c(10, 20), angle = c(-45, 45), border = FALSE)
+      for(i in 1:nrow(x$plot$signintervals)) {
+        ypolycoords <- x$plot$data$x[x$plot$signintervals[i,1]:x$plot$signintervals[i,2]]
+        polygon(c(ypolycoords,rev(ypolycoords)),c(x$plot$data$llci[x$plot$signintervals[i,1]:x$plot$signintervals[i,2]],x$plot$data$ulci[x$plot$signintervals[i,2]:x$plot$signintervals[i,1]]),col = "grey50", density = c(10, 20), angle = c(-45, 45), border = FALSE)
       }
-      lines(x=x$x,y=x$y,lwd=10)
-      lines(x=x$x, y=x$ulci, col="grey50",lty=2,lwd=8)
-      lines(x=x$x, y=x$llci, col="grey50",lty=2,lwd=8)
-      axis(side=1, lwd=10)
+      lines(x=x$plot$data$x,y=x$plot$data$y,lwd=celwd)
+      lines(x=x$plot$data$x, y=x$plot$data$ulci, col="grey50",lty=2,lwd=cblwd)
+      lines(x=x$plot$data$x, y=x$plot$data$llci, col="grey50",lty=2,lwd=cblwd)
+      axis(side=1, lwd=axlwd)
       mtext(side=1, xlab, line=2,font=2)
-      axis(side=2, lwd=10)
+      axis(side=2, lwd=axlwd)
       mtext(side=2, ylab, line=2,font=2)
-      abline(a=0, b=0)
+      abline(a=x$plot$sline, b=0)
     }
   }
 }

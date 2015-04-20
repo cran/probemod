@@ -2,24 +2,28 @@
 % Please edit documentation in R/pickapoint.R
 \name{pickapoint}
 \alias{pickapoint}
+\alias{spotlight}
 \title{Pick-A-Point Technique}
 \usage{
-pickapoint(model, dv, iv, mod, points, method = "meansd", alpha = 0.05)
+pickapoint(model, dv, iv, mod, points, method = "meansd", alpha = 0.05,
+  yas = "none")
 }
 \arguments{
-\item{model}{regression model (lm).}
+\item{model}{Regression model (lm, glm, list).}
 
-\item{dv}{dependent variable (character).}
+\item{dv}{Dependent variable (character).}
 
-\item{iv}{independent variable (character).}
+\item{iv}{Independent variable (character).}
 
-\item{mod}{moderator variable(s) (character or character vector).}
+\item{mod}{Moderator variable(s) (character or character vector).}
 
-\item{points}{list of points to test for each moderators (list).}
+\item{points}{List of points to test for each moderator variable (list).}
 
-\item{method}{method to use. Possible values are: \code{"meansd", "percentiles"}, \code{centered="meansd"} by default.}
+\item{method}{Method to use. Possible values are: \code{"meansd", "percentiles"}, \code{method="meansd"} by default.}
 
-\item{alpha}{alpha level to use (numeric).}
+\item{alpha}{Alpha level to use (numeric).}
+
+\item{yas}{Show y (or conditional effect) as: \code{"none", "ratio","probability","percentage"}, \code{yas="none"} by default.}
 }
 \value{
 A list with the elements

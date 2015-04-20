@@ -2,7 +2,7 @@
 #'
 #' Print function for objects of class \code{"pickapoint"}
 #'
-#' @param x an object of class \code{"pickapoint"}.
+#' @param x An object of class \code{"pickapoint"}.
 #' @param \dots Additional arguments (not supported yet).
 #'
 #' @return none

@@ -1,0 +1,12 @@
+0.2
+      *  Added glm support with link='logit' or link='log'
+      *  Added parameter 'yas' that allows users to specify if they wish to transform y
+      *  Added print function for jn
+      *  Added alias 'floodlight' for jn
+      *  Added plot function for pickapoint
+      *  Added alias 'spotlight' for pickapoint
+      *  Added opational parameters 'axlwd', 'celwd' and 'cblwd' for jn to allow users to control line width for axis, condtional effects, confidence band
+      *  Fixed bug for print.jn
+
+0.1 
+      *  Package first uploaded to CRAN

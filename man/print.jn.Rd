@@ -7,7 +7,7 @@
 \method{print}{jn}(x, \dots)
 }
 \arguments{
-\item{x}{an object of class \code{"jn"}.}
+\item{x}{An object of class \code{"jn"}.}
 
 \item{\dots}{Additional arguments (not supported yet).}
 }

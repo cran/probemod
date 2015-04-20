@@ -2,13 +2,15 @@
 #'
 #' Probe moderation effect using the Pick-A-Point technique
 #'
-#' @param model regression model (lm).
-#' @param dv dependent variable (character).
-#' @param iv independent variable (character).
-#' @param mod moderator variable(s) (character or character vector).
-#' @param points list of points to test for each moderators (list).
-#' @param method method to use. Possible values are: \code{"meansd", "percentiles"}, \code{centered="meansd"} by default.
-#' @param alpha alpha level to use (numeric).
+#' @aliases spotlight
+#' @param model Regression model (lm, glm, list).
+#' @param dv Dependent variable (character).
+#' @param iv Independent variable (character).
+#' @param mod Moderator variable(s) (character or character vector).
+#' @param points List of points to test for each moderator variable (list).
+#' @param method Method to use. Possible values are: \code{"meansd", "percentiles"}, \code{method="meansd"} by default.
+#' @param alpha Alpha level to use (numeric).
+#' @param yas Show y (or conditional effect) as: \code{"none", "ratio","probability","percentage"}, \code{yas="none"} by default.
 #'
 #' @return A list with the elements
 #'
@@ -29,12 +31,12 @@
 #'
 #' @export
 
-pickapoint <- function(model,dv,iv,mod,points,method,alpha) UseMethod("pickapoint")
-pickapoint <- function(model,dv,iv,mod,points,method="meansd",alpha=.05){
+pickapoint <- function(model,dv,iv,mod,points,method,alpha, yas) UseMethod("pickapoint")
+pickapoint <- spotlight <- function(model,dv,iv,mod,points,method="meansd",alpha=.05, yas='none'){
+  qrange <- c(.10,.25,.50,.75,.90)
+  papret <- list()
+
   #run checks on params
-  if(!is(model,'lm')) {
-    stop('this method currently supports only the lm object')
-  }
   if(!is.character(dv) || !is.character(iv) || !is.character(mod)){
     stop('params dv/iv/mod incorrectly specified')
   }
@@ -51,18 +53,60 @@ pickapoint <- function(model,dv,iv,mod,points,method="meansd",alpha=.05){
   if(!is.numeric(alpha)){
     stop('param alpha has to be numeric')
   }
+  if(is(model,'list')){
+    if(is.null(model$coefficients)){
+      stop("list model does not contain 'coefficients'")
+    }
+    else{
+      beta.hat <- model$coefficients
+    }
+    if(is.null(model$vcov)){
+      stop("list model does not contain 'vcov'")
+    } else{
+      cov <- model$vcov
+    }
+  } else if(is(model,'glm') & (model$family$link == 'log' | model$family$link == 'logit')){
+    beta.hat <- coef(model)
+    cov <- vcov(model)
+    papret$link <- model$family$link
+  } else if(is(model,'lm')){
+    beta.hat <- coef(model)
+    cov <- vcov(model)
+  } else{
+    stop('this method currently supports only the lm, glm(link == log or logit) & custom list objects')
+  }
 
-  qrange <- c(.10,.25,.50,.75,.90)
-  papret <- list()
+  if(missing(yas)){
+    papret$yas <- 'none'
+  } else {
+    if(yas == 'ratio'){
+      papret$yas <- yas
+      papret$sline <- 1
+    } else if(yas == 'prob' | yas == 'probability'){
+      papret$yas <- 'prob'
+      papret$sline <- 0.5
+    } else if(yas == 'percent' | yas == 'percentage'){
+      papret$yas <- 'percent'
+      papret$sline <- 0
+    } else {
+      stop("only 'ratio' or 'prob' ('probability') or 'percent' ('percentage') is supported in the current version")
+    }
+  }
+  yasfunc <- function(pap,value){
+    if(pap$yas == 'ratio') return(exp(value))
+    else if(pap$yas == 'prob') return(exp(value) / (1 + exp(value)))
+    else if(pap$yas == 'percent') return(100*(exp(value) - 1))
+    else return(value)
+  }
 
   data <- model$model
   papret$method <- method
   papret$iv <- iv
   papret$dv <- dv
   papret$mod <- mod
-  beta.hat <- coef(model)
-  tcrit=qt(p=alpha/2,df=model$df,lower.tail = FALSE)
-  cov <- vcov(model)
+
+  df <- nrow(data) - (length(beta.hat) + 1)
+  tcrit <- qt(p=alpha/2,df=df,lower.tail = FALSE)
   modpprefvals <- vector('list')
   modppmatrix <- vector('list')
 
@@ -93,16 +137,26 @@ pickapoint <- function(model,dv,iv,mod,points,method="meansd",alpha=.05){
   for(i in 1:nrow(modvals)){
     cy <- beta.hat[papret$iv]
     cyse <- cov[papret$iv, papret$iv]
-    for(j in 1:ncol(modvals))
-    {
+    for(j in 1:ncol(modvals)) {
       cy <- cy + (beta.hat[interactionterms[j]] * modvals[i,j])
       cyse <- cyse + (modvals[i,j]^2*cov[interactionterms[j], interactionterms[j]] + 2*modvals[i,j]*cov[papret$iv, interactionterms[j]])
     }
+    #calculate se and ci
     cyse <- sqrt(cyse)
-    ct <- cy/cyse
-    cp <- 2*pt(-abs(ct),df=model$df)
     culci <- cy + tcrit*cyse
     cllci <- cy - tcrit*cyse
+    ct <- cy/cyse
+
+    #recalculate if yas func
+    if(papret$yas != 'none') {
+      cy <- yasfunc(papret, cy)
+      cyse <- sqrt(cy^2 * cyse)
+      culci <- yasfunc(papret, culci)
+      cllci <- yasfunc(papret, cllci)
+    }
+
+    #cyse <- yasfunc(papret$yas, cyse)
+    cp <- 2*pt(-abs(ct),df=df)
     papret$outcome <- rbind(papret$outcome,c(modvals[i,],cy,cyse,ct,cp,cllci,culci))
   }
 

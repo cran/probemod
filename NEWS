@@ -5,7 +5,7 @@
       *  Added alias 'floodlight' for jn
       *  Added plot function for pickapoint
       *  Added alias 'spotlight' for pickapoint
-      *  Added opational parameters 'axlwd', 'celwd' and 'cblwd' for jn to allow users to control line width for axis, condtional effects, confidence band
+      *  Added optional parameters 'axlwd', 'celwd' and 'cblwd' for jn to allow users to control line width for axis, condtional effects, confidence band
       *  Fixed bug for print.jn
 
 0.1 

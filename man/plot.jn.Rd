@@ -14,9 +14,9 @@
 
 \item{ylab}{A title for the y axis (character).}
 
-\item{xlim}{Coordinates range for x axis (numeric vector). Determined by the range of the given data by default.}
+\item{xlim}{Coordinate range for x axis (numeric vector). Determined by the range of the given data by default.}
 
-\item{ylim}{Coordinates range for y axis (numeric vector). Determined by the range of the given data by default.}
+\item{ylim}{Coordinate range for y axis (numeric vector). Determined by the range of the given data by default.}
 
 \item{axlwd}{Axis line width (numeric vector). \code{axlwd=10} by default.}
 

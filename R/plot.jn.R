@@ -5,8 +5,8 @@
 #' @param x An object of class \code{"jn"}.
 #' @param xlab A title for the x axis (character).
 #' @param ylab A title for the y axis (character).
-#' @param xlim Coordinates range for x axis (numeric vector). Determined by the range of the given data by default.
-#' @param ylim Coordinates range for y axis (numeric vector). Determined by the range of the given data by default.
+#' @param xlim Coordinate range for x axis (numeric vector). Determined by the range of the given data by default.
+#' @param ylim Coordinate range for y axis (numeric vector). Determined by the range of the given data by default.
 #' @param axlwd Axis line width (numeric vector). \code{axlwd=10} by default.
 #' @param celwd Conditional effect line width (numeric vector). \code{celwd=10} by default.
 #' @param cblwd Conditional band line width (numeric vector). \code{cblwd=8} by default.

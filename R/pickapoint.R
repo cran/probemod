@@ -56,8 +56,7 @@ pickapoint <- spotlight <- function(model,dv,iv,mod,points,method="meansd",alpha
   if(is(model,'list')){
     if(is.null(model$coefficients)){
       stop("list model does not contain 'coefficients'")
-    }
-    else{
+    } else{
       beta.hat <- model$coefficients
     }
     if(is.null(model$vcov)){
@@ -65,15 +64,19 @@ pickapoint <- spotlight <- function(model,dv,iv,mod,points,method="meansd",alpha
     } else{
       cov <- model$vcov
     }
-  } else if(is(model,'glm') & (model$family$link == 'log' | model$family$link == 'logit')){
-    beta.hat <- coef(model)
-    cov <- vcov(model)
-    papret$link <- model$family$link
+  } else if(is(model,'glm')){
+    if(model$family$link == 'log' | model$family$link == 'logit'){
+      beta.hat <- coef(model)
+      cov <- vcov(model)
+      papret$link <- model$family$link
+    } else{
+      stop('this function currently supports only glm models with link == log or logit')
+    }
   } else if(is(model,'lm')){
     beta.hat <- coef(model)
     cov <- vcov(model)
-  } else{
-    stop('this method currently supports only the lm, glm(link == log or logit) & custom list objects')
+  } else {
+    stop('this function currently supports only the lm, glm(link == log or logit) & custom list objects')
   }
 
   if(missing(yas)){
